@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:food_delivery_app/models/cart_item.dart';
 import 'package:food_delivery_app/models/food.dart';
+import 'package:intl/intl.dart';
 
 class Restaurant extends ChangeNotifier {
   // list of food menu
@@ -9,9 +10,35 @@ class Restaurant extends ChangeNotifier {
     //burgers
     Food(
       discription: "A juicy beef patty with cheese, lettuce, and tomato",
-      imagePath: "lib/images/burgers/burger_1.jpg",
+      imagePath: "lib/images/burgers/burger_1.png",
       name: "Classic Cheeseburger",
       price: 0.99,
+      category: FoodCategory.burger,
+      availableAddons: [
+        Addon(name: "Extra Cheese", price: 0.95),
+        Addon(name: "Extra Sauce", price: 0.85),
+        Addon(name: "Extra Veggie", price: 0.99),
+      ],
+    ),
+    Food(
+      discription:
+          "Renowned for its depth of flavor, the Umami Burger features a savory beef patty infused with umami-rich ingredients like mushrooms, soy sauce, and Parmesan cheese. ",
+      imagePath: "lib/images/burgers/burger_2.png",
+      name: "Umami Burger",
+      price: 1.99,
+      category: FoodCategory.burger,
+      availableAddons: [
+        Addon(name: "Extra Cheese", price: 0.95),
+        Addon(name: "Extra Sauce", price: 0.85),
+        Addon(name: "Extra Veggie", price: 0.99),
+      ],
+    ),
+    Food(
+      discription:
+          "A regional specialty from Oklahoma, the Onion Burger showcases a beef patty cooked with thinly sliced onions pressed into the meat, creating a caramelized and flavorful crust. ",
+      imagePath: "lib/images/burgers/burger_3.png",
+      name: "Union Burger",
+      price: 1.99,
       category: FoodCategory.burger,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.95),
@@ -22,8 +49,9 @@ class Restaurant extends ChangeNotifier {
 
     // salads
     Food(
-      discription: "Crispy lettuce, tomato, and cheese",
-      imagePath: "lib/images/salads/salad_1.jpg",
+      discription:
+          "Greek salad Caesar salad Chicken salad Greek cuisine Spinach salad, Greek Salad, leaf Vegetable, food, recipe",
+      imagePath: "lib/images/salads/salad_1.png",
       name: "Ceaser Salad",
       price: 0.99,
       category: FoodCategory.salads,
@@ -36,8 +64,9 @@ class Restaurant extends ChangeNotifier {
 
     // sides
     Food(
-      discription: "A juicy beef patty with cheese, lettuce, and tomato",
-      imagePath: "lib/images/sides/side_1.jpg",
+      discription:
+          "Corn flakes Tableware Potato chip Side dish Flavor, others, food, corn Flakes, cuisine",
+      imagePath: "lib/images/sides/side_1.png",
       name: "Classic Cheeseburger",
       price: 0.99,
       category: FoodCategory.sides,
@@ -51,7 +80,7 @@ class Restaurant extends ChangeNotifier {
     // desserts
     Food(
       discription: "Rich and creamy chocolate cake",
-      imagePath: "lib/images/desserts/dessert_1.jpg",
+      imagePath: "lib/images/desserts/dessert_1.png",
       name: "Chocolate Cake",
       price: 0.99,
       category: FoodCategory.desserts,
@@ -65,7 +94,7 @@ class Restaurant extends ChangeNotifier {
     // drinks
     Food(
       discription: "A Classic Cuban Mojito with lime juice, mint, and soda",
-      imagePath: "lib/images/drinks/drink_1.jpg",
+      imagePath: "lib/images/drinks/drink_1.png",
       name: "Mojito",
       price: 4.99,
       category: FoodCategory.drinks,
@@ -76,9 +105,9 @@ class Restaurant extends ChangeNotifier {
       ],
     ),
     Food(
-      discription: "A Classic Cuban Mojito with lime juice, mint, and soda",
-      imagePath: "lib/images/drinks/drink_2.jpg",
-      name: "Mojito",
+      discription: "Sundae Smoothie Milkshake Falooda Non-alcoholic drink",
+      imagePath: "lib/images/drinks/drink_2.png",
+      name: "Faluda",
       price: 4.99,
       category: FoodCategory.drinks,
       availableAddons: [
@@ -191,8 +220,45 @@ class Restaurant extends ChangeNotifier {
   */
 
   // generate a receipt
+  String displayCartReceipt() {
+    final receipt = StringBuffer();
+    receipt.writeln("Here is your receipt.");
+    receipt.writeln();
+
+    // format the date to include up to seconds only
+    String formatDate = DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.now());
+
+    receipt.writeln("Date: $formatDate");
+    receipt.writeln();
+    receipt.writeln("_________");
+
+    for (final cartItem in _cart) {
+      receipt.writeln(
+        "${cartItem.quantity} x ${cartItem.food.name} (${_formatAddons(cartItem.selectedAddons)})",
+      );
+      if (cartItem.selectedAddons.isNotEmpty) {
+        receipt.writeln("Add-ons: ${_formatAddons(cartItem.selectedAddons)}");
+      }
+      receipt.writeln();
+    }
+
+    receipt.writeln("------------");
+    receipt.writeln();
+    receipt.writeln("Total Items: ${getTotalItemCount()}");
+    receipt.writeln("Total Price: ${_formatPrice(getTotalprice())}");
+
+    return receipt.toString();
+  }
 
   // format double value into money
+  String _formatPrice(double price) {
+    return "\$${price.toStringAsFixed(2)}";
+  }
 
   // format list of addons into a string summary
+  String _formatAddons(List<Addon> addons) {
+    return addons
+        .map((addon) => "${addon.name} (${_formatPrice(addon.price)})")
+        .join(", ");
+  }
 }

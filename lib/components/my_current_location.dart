@@ -47,7 +47,7 @@ class MyCurrentLocation extends StatelessWidget {
             child: Row(
               children: [
                 // address
-                Text("6901 Hollywood bly"),
+                Text("No.34, colombo 7"),
 
                 // drop down menu
                 Icon(Icons.keyboard_arrow_down_rounded),
